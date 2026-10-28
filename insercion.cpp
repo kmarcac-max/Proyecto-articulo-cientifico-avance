@@ -8,8 +8,7 @@
 using namespace std;
 using namespace chrono;
 
-
-void generarDatos(vector<int>& a, int patron, int semilla) {
+void generardatos(vector<int>& a, int patron, int semilla) {
     int n = a.size();
     srand(semilla);
 
@@ -45,11 +44,9 @@ void generarDatos(vector<int>& a, int patron, int semilla) {
     }
 }
 
-
-void insercion(vector<int>& a, long long& comparaciones,
-               long long& desplazamientos) {
+void insercion(vector<int>& a, long long& comparaciones, long long& desplazamientos) {
     int n = a.size();
-
+    
     for (int i = 1; i < n; i++) {
         int clave = a[i];
         int j = i - 1;
@@ -71,8 +68,7 @@ void insercion(vector<int>& a, long long& comparaciones,
     }
 }
 
-
-bool estaOrdenado(const vector<int>& a) {
+bool estaordenado(const vector<int>& a) {
     for (int i = 1; i < (int)a.size(); i++) {
         if (a[i] < a[i - 1])
             return false;
@@ -107,23 +103,20 @@ int main() {
                 int semilla = 42 + n * 7 + p * 100 + r;
 
                 vector<int> a(n);
-                generarDatos(a, p, semilla);
+                generardatos(a, p, semilla);
 
                 long long comparaciones = 0;
                 long long desplazamientos = 0;
 
-                steady_clock::time_point inicio =
-                    steady_clock::now();
+                steady_clock::time_point inicio = steady_clock::now();
 
                 insercion(a, comparaciones, desplazamientos);
 
-                steady_clock::time_point fin =
-                    steady_clock::now();
+                steady_clock::time_point fin = steady_clock::now();
 
-                double tiempo =
-                    duration<double, milli>(fin - inicio).count();
+                double tiempo = duration<double, milli>(fin - inicio).count();
 
-                if (!estaOrdenado(a)) {
+                if (!estaordenado(a)) {
                     cout << "Error: arreglo desordenado." << endl;
                     return 1;
                 }
