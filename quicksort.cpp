@@ -7,8 +7,7 @@
 using namespace std;
 using namespace chrono;
 
-
-void generarDatos(vector<int>& a, int patron, int semilla) {
+void generardatos(vector<int>& a, int patron, int semilla) {
     int n = a.size();
     srand(semilla);
 
@@ -27,9 +26,7 @@ void generarDatos(vector<int>& a, int patron, int semilla) {
     else if (patron == 3) {
         for (int i = 0; i < n; i++)
             a[i] = i;
-
         int cambios = n * 5 / 100;
-
         for (int i = 0; i < cambios; i++) {
             int x = rand() % n;
             int y = rand() % n;
@@ -43,11 +40,9 @@ void generarDatos(vector<int>& a, int patron, int semilla) {
             a[i] = rand() % 15;
     }
 }
-
-
-int particion(vector<int>& a, int inicio, int fin,
-              long long& comparaciones, long long& intercambios) {
-    int pivote = a[inicio + (fin - inicio) / 2];
+int particion(vector<int>& a, int inicio, int fin, long long& comparaciones, long long& intercambios) {
+    
+	int pivote = a[inicio + (fin - inicio) / 2];
     int i = inicio;
     int j = fin;
 
@@ -59,7 +54,6 @@ int particion(vector<int>& a, int inicio, int fin,
             else
                 break;
         }
-
         while (j >= inicio) {
             comparaciones++;
             if (a[j] > pivote)
@@ -67,7 +61,6 @@ int particion(vector<int>& a, int inicio, int fin,
             else
                 break;
         }
-
         if (i <= j) {
             if (i != j) {
                 int aux = a[i];
@@ -75,69 +68,51 @@ int particion(vector<int>& a, int inicio, int fin,
                 a[j] = aux;
                 intercambios++;
             }
-
             i++;
             j--;
         }
     }
-
     return i;
 }
-
-
-void quickSort(vector<int>& a, int inicio, int fin,
-               long long& comparaciones, long long& intercambios,
-               int profundidad, int& profundidadMaxima) {
-    if (profundidad > profundidadMaxima)
-        profundidadMaxima = profundidad;
-
+void quicksort(vector<int>& a, int inicio, int fin, long long& comparaciones, long long& intercambios, int profundidad, int& profundidadmaxima) {
+               	
+    if (profundidad > profundidadmaxima)
+        profundidadmaxima = profundidad;
+        
     if (inicio >= fin)
         return;
-
-    int indice = particion(a, inicio, fin,
-                           comparaciones, intercambios);
-
+    int indice = particion(a, inicio, fin, comparaciones, intercambios);
+    
     if (inicio < indice - 1) {
-        quickSort(a, inicio, indice - 1,
-                  comparaciones, intercambios,
-                  profundidad + 1, profundidadMaxima);
+        quicksort(a, inicio, indice - 1,comparaciones, intercambios, profundidad + 1, profundidadmaxima);
     }
-
-    if (indice < fin) {
-        quickSort(a, indice, fin,
-                  comparaciones, intercambios,
-                  profundidad + 1, profundidadMaxima);
+    
+    if (indice < fin) { 
+        quicksort(a, indice, fin, comparaciones, intercambios, profundidad + 1, profundidadmaxima);
     }
 }
-
-
-bool estaOrdenado(const vector<int>& a) {
+bool estaordenado(const vector<int>& a) {
     for (int i = 1; i < (int)a.size(); i++) {
         if (a[i] < a[i - 1])
             return false;
     }
     return true;
 }
-
 int main() {
     ofstream archivo("resultados_quicksort.csv");
-
     if (!archivo.is_open()) {
         cout << "No se pudo crear el archivo CSV." << endl;
         return 1;
     }
-
     archivo << "algoritmo,n,patron,repeticion,tiempo_ms,"
             << "comparaciones,intercambios,profundidad_recursion,"
             << "semilla,commit_hash\n";
 
     int tamanos[] = {1000, 5000, 10000};
-
     string patrones[] = {
         "aleatorio", "ascendente", "descendente",
         "casi_ordenado", "duplicados"
     };
-
     for (int t = 0; t < 3; t++) {
         int n = tamanos[t];
 
@@ -146,38 +121,29 @@ int main() {
                 int semilla = 42 + n * 7 + p * 100 + r;
 
                 vector<int> a(n);
-                generarDatos(a, p, semilla);
+                generardatos(a, p, semilla);
 
                 long long comparaciones = 0;
                 long long intercambios = 0;
-                int profundidadMaxima = 0;
+                int profundidadmaxima = 0;
 
                 steady_clock::time_point inicio =
                     steady_clock::now();
+                quicksort(a, 0, n - 1, comparaciones, intercambios,1, profundidadmaxima);
+                steady_clock::time_point fin = steady_clock::now();
+                double tiempo = duration<double, milli>(fin - inicio).count();
 
-                quickSort(a, 0, n - 1,
-                          comparaciones, intercambios,
-                          1, profundidadMaxima);
-
-                steady_clock::time_point fin =
-                    steady_clock::now();
-
-                double tiempo =
-                    duration<double, milli>(fin - inicio).count();
-
-                if (!estaOrdenado(a)) {
+                if (!estaordenado(a)) {
                     cout << "Error: arreglo desordenado." << endl;
                     return 1;
                 }
-
                 archivo << "quicksort," << n << ","
                         << patrones[p] << "," << r << ","
                         << fixed << setprecision(6) << tiempo << ","
                         << comparaciones << ","
                         << intercambios << ","
-                        << profundidadMaxima << ","
+                        << profundidadmaxima << ","
                         << semilla << ",NA\n";
-
                 cout << "Quick Sort | n=" << n
                      << " | " << patrones[p]
                      << " | repeticion " << r
@@ -185,7 +151,6 @@ int main() {
             }
         }
     }
-
     archivo.close();
 
     cout << "\nPruebas terminadas correctamente." << endl;
@@ -193,4 +158,3 @@ int main() {
 
     return 0;
 }
-
