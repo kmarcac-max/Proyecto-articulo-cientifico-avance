@@ -1,0 +1,9 @@
+# Compiladores y ejecutables
+*.exe
+*.out
+*.o
+*.obj
+
+# Archivos temporales de Dev-C++ u otros editores
+*.layout
+*.depend
