@@ -127,7 +127,7 @@ int main() {
                         << desplazamientos << ",0,"
                         << semilla << ",NA\n";
 
-                cout << "Insertion Sort | n=" << n
+                cout << "Insertion| n=" << n
                      << " | " << patrones[p]
                      << " | repeticion " << r
                      << " | " << tiempo << " ms" << endl;
